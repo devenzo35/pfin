@@ -3,7 +3,7 @@ from django.views import View
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView  
 from django.contrib.auth.models import User  
-from .forms import CreateUserForm
+from .forms import CreateUserForm, CreateAccountForm
 
 # Create your views here.
 
@@ -34,4 +34,16 @@ def RegisterView(request):
         form = CreateUserForm()
     
     return render(request, "registration/register.html", {'form': form})
-     
+
+def CreateAccountView(request):
+    if request.method == 'POST':
+        form = CreateAccountForm(request.POST)
+        if form.isValid():
+               account = form.save(commit=False)
+               account.user = request.user
+               account.save() 
+               return redirect("home.html")
+    else:
+        form = CreateAccountForm()
+    
+    return render(request, 'create_account.html', {form: form})
